@@ -39,7 +39,7 @@ h1{position:relative;z-index:2;font-size:clamp(2.4rem,min(10vw,calc((100svh - 37
 .pick .i{font-size:1.4em}.pick .ar{transition:transform .35s var(--ease)}
 .pick:hover .ar,.pick:focus-visible .ar{transform:translateX(6px)}
 .pick--a{background:var(--ink);color:var(--paper)}.pick--a .i{color:var(--orange)}
-.pick--b{background:var(--orange);color:#fff}
+.pick--b{background:var(--orange);color:var(--ink)}
 .pick:hover .i:first-child{animation:wig .6s ease}
 @keyframes wig{30%{transform:rotate(-12deg) scale(1.15)}60%{transform:rotate(8deg) scale(1.1)}}
 /* cada botón conserva su familia de color al pasar el mouse o enfocarlo */
@@ -55,23 +55,17 @@ h1{position:relative;z-index:2;font-size:clamp(2.4rem,min(10vw,calc((100svh - 37
 /* ventanas bajas (portátiles con barra de marcadores): se compacta el espaciado vertical */
 @media(max-height:720px){.cover{padding-top:76px;padding-bottom:28px}.desc{margin-bottom:10px}.roll{margin-top:12px}.cta{margin-top:20px}.pick{min-height:52px}.preview{margin-top:10px}}
 @media(max-height:520px){.cover{padding-top:72px;padding-bottom:20px}.roll,.preview{display:none}h1{font-size:clamp(1.8rem,min(10vw,calc((100svh - 250px)/3.1)),8.2rem)}}
-/* móvil: título y subtítulo centrados; el logo animado (logo.js) ocupa el hueco arriba a la derecha */
-.logobox{display:none}
+/* móvil: título arriba, marca en el medio y botones al pie, repartidos en todo el alto */
 @media(max-width:759px){
-  .big-mark,.preview{display:none}
   .cover{padding:76px var(--g) 28px}
   .cover__in{flex:1;display:flex;flex-direction:column}
-  h1{font-size:clamp(2.4rem,min(14.5vw,calc((100svh - 330px)/3.1)),5.2rem)}
-  .desc{margin-top:auto}
-  .roll{margin-bottom:auto}
-  .cta{margin-top:20px;flex-direction:column;gap:12px}
+  h1{font-size:clamp(2.4rem,min(13vw,calc((100svh - 400px)/3.1)),5rem)}
+  .cta{margin-top:auto;flex-direction:column;gap:12px}
   .pick{width:100%;justify-content:space-between}
-  .logobox{display:block;position:absolute;z-index:1;left:0;top:0;width:10px;height:10px;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
-  .logobox svg{position:absolute;inset:0;width:100%;height:100%;display:block;overflow:hidden}
-  /* solo las líneas se desvanecen en los bordes del recuadro; el logo queda nítido */
-  .logobox svg.runs{-webkit-mask-image:linear-gradient(to right,transparent 0,#000 18%),linear-gradient(to bottom,transparent 0,#000 12%,#000 88%,transparent 100%);-webkit-mask-composite:source-in;
-    mask-image:linear-gradient(to right,transparent 0,#000 18%),linear-gradient(to bottom,transparent 0,#000 12%,#000 88%,transparent 100%);mask-composite:intersect}
+  .preview{text-align:center}
+  .big-mark{width:min(58vw,24svh);right:calc(var(--g) + 4vw);top:60%;opacity:1}
 }
+@media(max-width:759px) and (max-height:720px){.big-mark{opacity:.2;width:50vw;top:50%}}
 
 /* ===== TRANSICIÓN ===== */
 .wipe{position:fixed;inset:0;z-index:100;pointer-events:none;clip-path:circle(0 at 50% 50%);opacity:1}
@@ -238,8 +232,8 @@ select.field__input option{background:var(--paper);color:var(--ink)}
 .price .amt{font:800 1.9rem/1 var(--fd);letter-spacing:-.03em;font-variation-settings:"wdth" 82}
 .price .per{display:block;font:600 .88rem var(--fd);color:var(--muted);margin-top:4px}
 .plan .btn{align-self:stretch;text-align:center;margin-top:4px}
-.plan--rec{background:var(--orange);color:#fff}
-.plan--rec .who,.plan--rec .per,.plan--rec .note{color:#fff}.plan--rec .price{border-top-color:#fff}.plan--rec .ic{background:var(--ink);color:var(--orange)}
+.plan--rec{background:var(--orange)}
+.plan--rec .who,.plan--rec .per{color:var(--ink)}.plan--rec .ic{background:var(--ink);color:var(--orange)}
 .badge{position:absolute;top:-13px;left:22px;background:var(--ink);color:var(--paper);font:700 .78rem var(--fd);letter-spacing:.06em;text-transform:uppercase;padding:6px 12px;border-radius:999px}
 .plan.flash{animation:flash 1.4s ease}
 @keyframes flash{0%,100%{box-shadow:0 0 0 0 rgba(242,106,27,0)}30%{box-shadow:0 0 0 12px rgba(242,106,27,.45)}}
@@ -284,5 +278,5 @@ select.field__input option{background:var(--paper);color:var(--ink)}
   .rv{opacity:1;transform:none}.l>span{transform:none}.big-mark path{stroke-dashoffset:0}
 }
 @media print{.skip,#bar,.wipe{display:none}}
-.plan--rec li::before{background:#fff}
-.plan--rec li{border-top-color:rgba(255,255,255,.45)}
+.plan--rec li::before{background:var(--ink)}
+.plan--rec li{border-top-color:rgba(28,29,31,.3)}
