@@ -40,6 +40,7 @@ h1{position:relative;z-index:2;font-size:clamp(2.4rem,min(10vw,calc((100svh - 37
 .pick:hover .ar,.pick:focus-visible .ar{transform:translateX(6px)}
 .pick--a{background:var(--ink);color:var(--paper)}.pick--a .i{color:var(--orange)}
 .pick--b{background:var(--orange);color:var(--ink)}
+.pick--b>span{color:#fff}
 .pick:hover .i:first-child{animation:wig .6s ease}
 @keyframes wig{30%{transform:rotate(-12deg) scale(1.15)}60%{transform:rotate(8deg) scale(1.1)}}
 /* cada botón conserva su familia de color al pasar el mouse o enfocarlo */
@@ -55,17 +56,18 @@ h1{position:relative;z-index:2;font-size:clamp(2.4rem,min(10vw,calc((100svh - 37
 /* ventanas bajas (portátiles con barra de marcadores): se compacta el espaciado vertical */
 @media(max-height:720px){.cover{padding-top:76px;padding-bottom:28px}.desc{margin-bottom:10px}.roll{margin-top:12px}.cta{margin-top:20px}.pick{min-height:52px}.preview{margin-top:10px}}
 @media(max-height:520px){.cover{padding-top:72px;padding-bottom:20px}.roll,.preview{display:none}h1{font-size:clamp(1.8rem,min(10vw,calc((100svh - 250px)/3.1)),8.2rem)}}
-/* móvil: título arriba, marca en el medio y botones al pie, repartidos en todo el alto */
+/* móvil: logo grande y translúcido detrás del texto; título y subtítulo al centro, botones al pie */
 @media(max-width:759px){
+  .preview{display:none}
   .cover{padding:76px var(--g) 28px}
   .cover__in{flex:1;display:flex;flex-direction:column}
-  h1{font-size:clamp(2.4rem,min(13vw,calc((100svh - 400px)/3.1)),5rem)}
-  .cta{margin-top:auto;flex-direction:column;gap:12px}
+  h1{font-size:clamp(2.4rem,min(15vw,calc((100svh - 330px)/3.1)),5.4rem)}
+  .desc{margin-top:auto}
+  .roll{margin-bottom:auto}
+  .cta{margin-top:20px;flex-direction:column;gap:12px}
   .pick{width:100%;justify-content:space-between}
-  .preview{text-align:center}
-  .big-mark{width:min(58vw,24svh);right:calc(var(--g) + 4vw);top:60%;opacity:1}
+  .big-mark{transform:none;width:112vw;right:-14vw;top:47%;margin-top:-50vw;opacity:.16;z-index:0}
 }
-@media(max-width:759px) and (max-height:720px){.big-mark{opacity:.2;width:50vw;top:50%}}
 
 /* ===== TRANSICIÓN ===== */
 .wipe{position:fixed;inset:0;z-index:100;pointer-events:none;clip-path:circle(0 at 50% 50%);opacity:1}
