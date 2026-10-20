@@ -32,32 +32,28 @@
     ['shield', 'Seguridad digital', 'Reconocer mensajes sospechosos, proteger tus cuentas y evitar estafas.']
   ];
   $('#pg').innerHTML = PEOPLE.map(function (p, i) {
-    var big = i === 0;
-    return '<article class="pc rv' + (big ? ' big' : '') + '" style="--d:' + (i * .08) + 's"><span class="ic">' + ico(p[0]) + '</span><h3>' + p[1] + '</h3><p>' + p[2] + '</p>' +
-      (big ? '<div class="mock" aria-hidden="true"><span>' + ico('chat') + '</span><span>' + ico('folder') + '</span><span>' + ico('shield') + '</span></div>' : '') + '</article>';
-  }).join('') +
-    '<article class="pc pc--cta wide rv" style="--d:.4s"><span class="ic">' + ico('chat') + '</span><div class="txt"><h3>¿Empezamos?</h3><p>Contame qué te gustaría resolver y lo vemos a tu ritmo.</p></div><a class="btn" href="#contacto-b">Contame en qué necesitás ayuda</a></article>';
+    return '<article class="pc rv" style="--d:' + (i * .08) + 's"><span class="ic">' + ico(p[0]) + '</span><h3>' + p[1] + '</h3><p>' + p[2] + '</p></article>';
+  }).join('');
 
-  /* Pasos: paneles que se expanden; avanzan solos hasta que la persona interactúa */
+  /* Pasos: se encienden en secuencia al llegar a la sección y quedan completos */
   function initSteps(sg, bar, data) {
+    sg.setAttribute('data-n', data.length);
     sg.innerHTML = data.map(function (s, i) {
-      return '<button type="button" class="st rv" style="--d:' + (i * .08) + 's"><span class="sn" aria-hidden="true">0' + (i + 1) + '</span><span class="ic">' + ico(s[0]) + '</span><div><h3>' + s[1] + '</h3><p>' + s[2] + '</p></div></button>';
+      return '<div class="st rv" style="--d:' + (i * .08) + 's"><span class="sn" aria-hidden="true">0' + (i + 1) + '</span><span class="ic">' + ico(s[0]) + '</span><div><h3>' + s[1] + '</h3><p>' + s[2] + '</p></div></div>';
     }).join('');
-    var st = $$('.st', sg), act = -1, timer = null, hold = false;
-    function set(i) { act = i; st.forEach(function (s, k) { s.classList.toggle('on', k === i); s.classList.toggle('cur', k === i); }); bar.style.setProperty('--p', ((i + 1) / st.length * 100) + '%'); }
-    st.forEach(function (s, i) {
-      ['mouseenter', 'focus', 'click'].forEach(function (ev) { s.addEventListener(ev, function () { hold = true; set(i); }); });
-      s.addEventListener('mouseleave', function () { hold = false; });
-    });
-    sg.addEventListener('scroll', function () {
-      if (innerWidth >= 900) return;
-      var c = sg.scrollLeft + sg.clientWidth / 2, b = 0, bd = 1e9;
-      st.forEach(function (s, k) { var d = Math.abs(s.offsetLeft + s.offsetWidth / 2 - c); if (d < bd) { bd = d; b = k; } });
-      set(b);
-    }, { passive: true });
+    var st = $$('.st', sg), timer = null;
+    function set(i, fin) {
+      st.forEach(function (s, k) { s.classList.toggle('on', k === i && !fin); s.classList.toggle('done', k < i || !!fin); });
+      bar.style.setProperty('--p', (fin ? 100 : (i + 1) / st.length * 100) + '%');
+    }
     return {
-      play: function () { clearInterval(timer); set(0); if (reduce) return; timer = setInterval(function () { if (hold || innerWidth < 900) return; set((act + 1) % st.length); }, 2600); },
-      reset: function () { clearInterval(timer); act = -1; st.forEach(function (s) { s.classList.remove('on', 'cur'); }); bar.style.setProperty('--p', '0%'); }
+      play: function () {
+        clearInterval(timer);
+        if (reduce) { set(st.length - 1, true); return; }
+        var n = -1;
+        timer = setInterval(function () { n++; if (n >= st.length) { clearInterval(timer); set(st.length - 1, true); return; } set(n); }, 1100);
+      },
+      reset: function () { clearInterval(timer); st.forEach(function (s) { s.classList.remove('on', 'done'); }); bar.style.setProperty('--p', '0%'); }
     };
   }
   var stepsA = initSteps($('#sg-a'), $('#pbar-a'), STEPS_A), stepsB = initSteps($('#sg-b'), $('#pbar-b'), STEPS_B);
@@ -96,16 +92,14 @@
     $$('[data-sw]').forEach(function (sw) {
       var b = $('[aria-pressed=true]', sw), p = $('.pill', sw);
       if (!b || !sw.getClientRects().length) return;
-      p.style.cssText = 'left:3px;right:3px;top:' + b.offsetTop + 'px;height:' + b.offsetHeight + 'px';
+      p.style.cssText = 'top:3px;bottom:3px;left:' + b.offsetLeft + 'px;width:' + b.offsetWidth + 'px';
     });
   }
   function apply(k) {
     current = k; rev.dataset.aud = k; document.body.dataset.aud = k; rev.classList.add('on');
-    $$('#rail [data-pick],#pop [data-pick]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.pick === k)); });
-    $('#chip').innerHTML = ico(k === 'a' ? 'store' : 'user');
+    $$('#bar [data-pick]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.pick === k)); });
     $('#nav-contacto').setAttribute('href', k === 'a' ? '#contacto-a' : '#contacto-b');
     $('.foot-about').hidden = false;
-    $('#rail').classList.add('show'); $('#chip').classList.add('show');
     observe(); requestAnimationFrame(pills); setTimeout(pills, 60);
   }
   function pick(k, x, y) {
@@ -127,20 +121,22 @@
       var r = b.getBoundingClientRect(), inCover = !!b.closest('.cover');
       var x = inCover ? (e.clientX || r.left + r.width / 2) : r.left + r.width / 2, y = inCover ? (e.clientY || r.top + r.height / 2) : r.top + r.height / 2;
       pick(b.dataset.pick, x, y);
-      $('#pop').classList.remove('open'); $('#chip').classList.remove('open'); $('#chip').setAttribute('aria-expanded', 'false');
     });
   });
-  $('#chip').addEventListener('click', function () { var o = $('#pop').classList.toggle('open'); this.classList.toggle('open', o); this.setAttribute('aria-expanded', String(o)); });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { $('#pop').classList.remove('open'); $('#chip').classList.remove('open'); } });
 
   /* Enlaces "Consultar por…" preseleccionan el tipo de necesidad */
   $$('[data-need]').forEach(function (a) { a.addEventListener('click', function () { $('#a-need').value = a.getAttribute('data-need'); }); });
 
-  /* Rail/botón y tarjetas apiladas según el scroll */
+  /* Barra de selector: se oculta al bajar y reaparece al subir (nunca sobre la cabecera de la sección). Tarjetas apiladas según el scroll */
+  var lastY = scrollY, bar = $('#bar');
   addEventListener('scroll', function () {
-    var on = rev.classList.contains('on') && scrollY > cover.offsetHeight - 120;
-    $('#rail').classList.toggle('show', on); $('#chip').classList.toggle('show', on);
-    if (!on) { $('#pop').classList.remove('open'); $('#chip').classList.remove('open'); }
+    var y = scrollY;
+    if (rev.classList.contains('on')) {
+      var past = y > cover.offsetHeight + 80;
+      if (Math.abs(y - lastY) > 3) bar.classList.toggle('show', past && y < lastY);
+      if (!past) bar.classList.remove('show');
+    }
+    lastY = y;
     var cs = $$('.card');
     cs.forEach(function (c, i) {
       var n = cs[i + 1]; if (!n || !c.offsetParent) return;

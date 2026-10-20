@@ -47,10 +47,9 @@
 <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M4 6h16v14H4zM4 10.5h16M8 3.5v4M16 3.5v4"/></symbol>
 </defs></svg>
 
-<!-- Selector de recorrido discreto (aparece al elegir): riel lateral en pantallas anchas, botón de esquina en el resto -->
-<div class="sw" id="rail" data-sw="v" role="group" aria-label="Cambiar de recorrido"><span class="pill"></span><button type="button" data-pick="a" aria-pressed="true">Empresas</button><button type="button" data-pick="b" aria-pressed="false">Personas</button></div>
-<button id="chip" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Cambiar de recorrido"></button>
-<div id="pop" role="group" aria-label="Cambiar de recorrido"><button type="button" data-pick="a" aria-pressed="true">Empresas y comercios</button><button type="button" data-pick="b" aria-pressed="false">Personas</button></div>
+<!-- Selector de recorrido: barra fina que aparece al subir el scroll (no tapa el contenido) -->
+<header id="bar"><a class="brand" href="#inicio" aria-label="Ebrar, volver al inicio"><svg viewBox="-4 10 112 100" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"><path d="M56 98H48A38 38 0 0 1 48 22H78A19 19 0 0 1 78 60H12"/><path d="M60 60L92 98"/></g></svg>Ebrar</a>
+  <div class="sw" data-sw="h" role="group" aria-label="Cambiar de recorrido"><span class="pill"></span><button type="button" data-pick="a" aria-pressed="true">Empresas</button><button type="button" data-pick="b" aria-pressed="false">Personas</button></div></header>
 
 <main id="contenido">
 <section class="cover" id="inicio" aria-labelledby="titulo-hero">
@@ -105,6 +104,7 @@
     <h2 class="rv" id="t-per">No hace falta saber de tecnología <em>para pedir ayuda.</em></h2>
     <p class="lead rv">Te acompaño con paciencia y a tu ritmo, para que uses el celular, la computadora y los servicios digitales con más confianza e independencia. Cada persona tiene sus propias dudas, y la ayuda se adapta a ellas.</p>
     <div class="pg" id="pg"></div>
+    <div class="cta-row rv"><a class="btn" href="#contacto-b">Contame en qué necesitás ayuda</a></div>
     <aside class="notice rv" role="note"><svg class="i" aria-hidden="true"><use href="#i-info"/></svg><p><strong>Vos conservás el control.</strong> Nunca te voy a pedir contraseñas bancarias ni códigos de verificación: tus dispositivos y tus claves son tuyos. Tampoco ofrezco asesoramiento legal, financiero ni especializado en ciberseguridad.</p></aside>
     <p id="modalidad-info" class="note" hidden></p>
     <p class="lead rv" style="margin:32px 0 0"><a class="link" href="precios.html#personas">Ver precios y planes →</a></p>
