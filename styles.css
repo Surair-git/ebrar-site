@@ -97,7 +97,7 @@ body[data-aud="a"] #bar .sw{background:#3a3b40}body[data-aud="b"] #bar .sw{backg
 .rbar nav a{text-decoration:none;padding:8px 2px;border-bottom:2px solid transparent}.rbar nav a:hover{border-color:var(--orange)}
 @media(max-width:560px){.rbar nav{gap:12px;font-size:.85rem}.rbar .brand{font-size:1.25rem}}
 @media(max-width:380px){.rbar{flex-wrap:wrap;gap:4px 16px;padding-block:10px}.rbar nav{gap:10px;font-size:.8rem;flex-wrap:wrap}}
-section.s{padding-block:clamp(56px,9vw,112px);scroll-margin-top:56px}
+section.s{padding-block:clamp(48px,6vw,80px);scroll-margin-top:56px}
 .k{font:700 .8rem var(--fd);letter-spacing:.12em;text-transform:uppercase;opacity:.7;margin-bottom:14px}
 h2{font-size:clamp(2.1rem,6vw,4.6rem);max-width:13em;margin-bottom:clamp(28px,5vw,60px)}
 h2 em{font-style:normal;color:var(--orange)}
@@ -178,10 +178,11 @@ details+details{margin-top:0}
 @media(min-width:860px){.contact{grid-template-columns:1fr 1fr;gap:72px;align-items:start}}
 .contact h2{margin-bottom:20px}
 .contact p{max-width:28em}
-.form{display:grid;gap:26px;align-content:start}
+.form{position:relative;display:grid;gap:22px;align-content:start}
+#contacto-a,#contacto-b{padding-bottom:clamp(40px,5vw,64px)}
 .field__label{display:block;margin-bottom:4px;font:700 1rem var(--fd)}
 .field__input{width:100%;padding:10px 0;border:0;border-bottom:2px solid currentColor;border-radius:0;background:transparent;color:inherit;font:inherit;font-size:1.15rem;line-height:1.4}
-.field__input--area{resize:vertical;min-height:7.5em}
+.field__input--area{resize:vertical;min-height:6em}
 .field__input:focus-visible{outline:3px solid var(--orange);outline-offset:4px}
 .field__input[aria-invalid="true"]{border-bottom-style:dashed}
 select.field__input option{background:var(--paper);color:var(--ink)}
@@ -191,6 +192,8 @@ select.field__input option{background:var(--paper);color:var(--ink)}
 .trap{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 .form .btn{justify-self:start;background:var(--orange);color:var(--ink)}.form .btn:hover{background:#ff7c33}
 .form__status{margin:0;min-height:1.5em;font:600 1.02rem var(--fd)}
+/* El estado vacío sigue disponible para lectores de pantalla sin reservar una fila. */
+.form__status:empty{position:absolute;width:1px;height:1px;min-height:0;overflow:hidden;clip-path:inset(50%)}
 .form__status[data-state="success"],.form__status[data-state="error"]{padding:12px 16px;border:3px solid currentColor;border-radius:12px}
 
 /* Pie */
@@ -234,40 +237,42 @@ select.field__input option{background:var(--paper);color:var(--ink)}
 .price .amt{font:800 1.9rem/1 var(--fd);letter-spacing:-.03em;font-variation-settings:"wdth" 82}
 .price .per{display:block;font:600 .88rem var(--fd);color:var(--muted);margin-top:4px}
 .plan .btn{align-self:stretch;text-align:center;margin-top:4px}
-.plan--rec{background:var(--orange)}
-.plan--rec .who,.plan--rec .per{color:var(--ink)}.plan--rec .ic{background:var(--ink);color:var(--orange)}
-.badge{position:absolute;top:-13px;left:22px;background:var(--ink);color:var(--paper);font:700 .78rem var(--fd);letter-spacing:.06em;text-transform:uppercase;padding:6px 12px;border-radius:999px}
+.plan--rec{border-color:var(--orange)}
+.plan--rec .ic{border-color:var(--orange)}
+.plan--rec .btn{background:var(--orange);color:var(--ink)}
+.plan--rec .btn:hover{background:#ff7c33}
+.badge{position:absolute;top:-13px;left:16px;max-width:calc(100% - 32px);background:var(--orange);color:var(--ink);font:700 .72rem var(--fd);letter-spacing:.04em;text-transform:uppercase;padding:6px 12px;border-radius:999px}
 .plan.flash{animation:flash 1.4s ease}
 @keyframes flash{0%,100%{box-shadow:0 0 0 0 rgba(242,106,27,0)}30%{box-shadow:0 0 0 12px rgba(242,106,27,.45)}}
-.plan.dim{opacity:.45}
 .addons{margin-top:clamp(36px,6vw,64px)}
 /* a medida: armá tu plan */
-.build{margin-top:clamp(48px,8vw,96px);display:grid;gap:28px;padding:clamp(22px,4vw,44px);border:2px solid var(--ink);border-radius:32px;background:var(--ink);color:var(--paper)}
+.build{display:grid;gap:28px;padding:clamp(22px,4vw,44px);border:2px solid var(--ink);border-radius:32px;background:var(--ink);color:var(--paper)}
 @media(min-width:900px){.build{grid-template-columns:1.2fr 1fr;gap:48px}}
 .build h2{font-size:clamp(2rem,4.6vw,3.4rem);margin-bottom:14px}
-.mods{display:grid;gap:10px;margin:22px 0 0;padding:0;list-style:none}
-@media(min-width:560px){.mods{grid-template-columns:1fr 1fr}}
+.mods{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:10px;margin:22px 0 0;padding:0;list-style:none}
 .mod{position:relative}
 .mod input{position:absolute;opacity:0;inset:0;width:100%;height:100%;cursor:pointer;margin:0}
-.mod label{display:flex;align-items:center;gap:12px;padding:14px 16px;border:2px solid rgba(239,239,234,.35);border-radius:16px;font:700 1rem var(--fd);transition:background .25s,border-color .25s,color .25s;min-height:56px}
+.mod label{display:grid;grid-template-columns:1.4rem minmax(0,1fr) 22px;align-items:center;gap:12px;padding:14px 16px;border:2px solid rgba(239,239,234,.35);border-radius:16px;font:700 1rem var(--fd);transition:background .25s,border-color .25s,color .25s;min-height:56px}
+.mod label>span:not(.tick){min-width:0;overflow-wrap:anywhere}
 .mod label .i{font-size:1.4rem;color:var(--orange)}
-.mod .tick{margin-left:auto;width:22px;height:22px;border-radius:50%;border:2px solid rgba(239,239,234,.5);display:grid;place-items:center;font-size:.8rem;color:transparent;transition:all .25s}
+.mod .tick{width:22px;height:22px;aspect-ratio:1;flex-shrink:0;border-radius:50%;border:2px solid rgba(239,239,234,.5);display:grid;place-items:center;font-size:.8rem;color:transparent;transition:all .25s}
 .mod input:checked+label{background:var(--orange);border-color:var(--orange);color:var(--ink)}
 .mod input:checked+label .i{color:var(--ink)}
 .mod input:checked+label .tick{background:var(--ink);border-color:var(--ink);color:var(--orange)}
 .mod input:focus-visible+label{outline:3px solid var(--paper);outline-offset:3px}
-.sum{background:var(--paper);color:var(--ink);border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:14px;align-self:start}
+.sum{position:relative;min-width:0;background:var(--paper);color:var(--ink);border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:12px;align-self:start}
 .sum h3{font-size:1.4rem}
 .sum ul{list-style:none;margin:0;padding:0;font-size:1rem}
 .sum li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid rgba(28,29,31,.2)}
+.sum li span:first-child{min-width:0;overflow-wrap:anywhere}
 .sum li span:last-child{font:700 .95rem var(--fd);white-space:nowrap}
 .sum .empty{opacity:.7;font-size:1rem}
 .sum .tot{border-top:2px solid var(--ink);padding-top:12px;font:800 1.05rem var(--fd)}
-.sum .field__input{border-color:var(--ink);font-size:1.05rem}
+.sum .field__input{border-color:var(--ink);font-size:1.05rem;padding-block:8px}
+.sum .field__input--area{min-height:5em}
 .sum .form__status{font-size:.95rem}
 .sum .btn{background:var(--orange);color:var(--ink)}.sum .btn:hover{background:#ff7c33}
 .sum .field__label{font-size:.9rem}
-.how{margin-top:clamp(48px,8vw,96px)}
 .how ol{list-style:none;margin:0;padding:0;display:grid;gap:16px}
 @media(min-width:800px){.how ol{grid-template-columns:repeat(3,1fr)}}
 .how li{padding:22px;border:2px solid var(--ink);border-radius:22px}
@@ -280,5 +285,3 @@ select.field__input option{background:var(--paper);color:var(--ink)}
   .rv{opacity:1;transform:none}.l>span{transform:none}.big-mark path{stroke-dashoffset:0}
 }
 @media print{.skip,#bar,.wipe{display:none}}
-.plan--rec li::before{background:var(--ink)}
-.plan--rec li{border-top-color:rgba(28,29,31,.3)}

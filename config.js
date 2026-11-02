@@ -34,7 +34,7 @@ window.EBRAR_CONFIG = {
    */
   precios: {
     moneda: "ARS",
-    nota: "Los valores son orientativos. El alcance y el presupuesto final se acuerdan antes de empezar.",
+    nota: "El presupuesto se define según lo que necesitás. Antes de empezar, acordamos el alcance, los plazos y el valor.",
     duracionSesion: "",   // Ej.: "60 minutos". Vacío = no se muestra.
     packSesiones: "",     // Ej.: "4 sesiones". Vacío = "cantidad a acordar".
     planes: {

@@ -7,7 +7,7 @@
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return [].slice.call((r || document).querySelectorAll(s)); };
   var ico = function (n) { return '<svg class="i" aria-hidden="true"><use href="#i-' + n + '"/></svg>'; };
-  var root = $('#pricing'), aud = 'a', selected = {};
+  var root = $('#pricing'), aud = 'a', selectedPlan = null;
   var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   E.wireDirectLinks();
 
@@ -20,8 +20,8 @@
           inc: ['Diseño y desarrollo de un sitio a tu medida', 'Adaptado a celulares y computadoras', 'Contacto directo por formulario y WhatsApp', 'Optimización básica de rendimiento', 'Entrega con explicación de cómo usarlo'] },
         { id: 'tienda', icon: 'cart', name: 'Tienda online', who: 'Para quienes quieren vender por internet.',
           inc: ['Creación o mejora de tu tienda online', 'Catálogo y medios de pago según la plataforma elegida', 'Pruebas antes de publicar', 'Herramientas elegidas según tu presupuesto y tu situación'] },
-        { id: 'mantenimiento', icon: 'wrench', name: 'Mantenimiento', rec: true, who: 'Para webs y tiendas que ya funcionan y tienen que mantenerse al día.',
-          inc: ['Revisión técnica periódica', 'Actualizaciones planificadas con comprobación posterior', 'Copias de seguridad y verificación de su disponibilidad', 'Corrección de errores', 'Consultas técnicas dentro del alcance acordado'] },
+        { id: 'mantenimiento', icon: 'wrench', name: 'Mantenimiento', who: 'Para webs y tiendas que ya funcionan y tienen que mantenerse al día.',
+          inc: ['Revisión técnica periódica', 'Actualizaciones planificadas con comprobación posterior', 'Copias de seguridad y verificación de su disponibilidad', 'Corrección de errores', 'Tareas y tiempos de respuesta definidos en la propuesta'] },
         { id: 'automatizacion', icon: 'bolt', name: 'Automatización', who: 'Para quienes repiten tareas a mano y quieren simplificarlas.',
           inc: ['Análisis del proceso antes de proponer nada', 'Solución viable con alcance acordado', 'Conexión entre herramientas compatibles', 'Presupuesto cerrado antes de empezar'],
           note: 'Algunas automatizaciones requieren investigación previa para confirmar su viabilidad.' }
@@ -52,11 +52,11 @@
       cols: 'p3',
       plans: [
         { id: 'sesion', icon: 'calendar', name: 'Sesión individual', who: 'Para resolver una duda o aprender algo puntual.',
-          inc: ['Una sesión sobre lo que necesitás', 'Trabajamos con tu propio dispositivo', 'Contenido adaptado a tu ritmo'] },
-        { id: 'pack', icon: 'layers', name: 'Pack de sesiones', rec: true, who: 'Para aprender paso a paso, con continuidad.',
-          inc: ['Varias sesiones con continuidad', 'Temario armado según tus necesidades', 'Tiempo para practicar entre sesión y sesión'] },
+          inc: ['Una sesión con turno sobre lo que necesitás', 'Trabajamos con tu propio dispositivo', 'Contenido adaptado a tu ritmo'] },
+        { id: 'pack', icon: 'layers', name: 'Pack de sesiones', who: 'Para aprender paso a paso, con continuidad.',
+          inc: ['Sesiones con turno y cantidad acordada', 'Temario armado según tus necesidades', 'Tiempo para practicar entre sesión y sesión'] },
         { id: 'seguimiento', icon: 'user', name: 'Acompañamiento mensual', who: 'Para tener a alguien de confianza a quien consultar con regularidad.',
-          inc: ['Sesiones regulares acordadas de antemano', 'Consultas de seguimiento dentro del alcance acordado', 'Siempre con la misma persona'] }
+          inc: ['Sesiones con turno y frecuencia acordada', 'Consultas y tiempos de respuesta definidos en la propuesta', 'Siempre con la misma persona'] }
       ],
       addons: [],
       situ: [
@@ -92,8 +92,8 @@
   /* ---------- Render ---------- */
   function planCard(pl, i) {
     var p = priceOf(pl.id);
-    return '<article class="plan rv' + (pl.rec ? ' plan--rec' : '') + '" id="plan-' + pl.id + '" style="--d:' + (i * .07) + 's">' +
-      (pl.rec ? '<span class="badge">Recomendación de Ebrar</span>' : '') +
+    return '<article class="plan rv" id="plan-' + pl.id + '" style="--d:' + (i * .07) + 's">' +
+      '<span class="badge" hidden>Recomendado para vos</span>' +
       '<span class="ic">' + ico(pl.icon) + '</span><h3>' + pl.name + '</h3><p class="who">' + pl.who + '</p>' +
       '<ul>' + pl.inc.map(function (t) { return '<li>' + t + '</li>'; }).join('') + '</ul>' +
       (pl.note ? '<p class="note" style="font-size:.92rem">' + pl.note + '</p>' : '') +
@@ -110,7 +110,7 @@
     $('#addons').innerHTML = hasAdd ? '<div class="plans p3">' + d.addons.map(planCard).join('') + '</div>' : '';
     $('#pnote').textContent = d.note || '';
     $('#build-lead').textContent = d.lead;
-    selected = {};
+    selectedPlan = null;
     $('#mods').innerHTML = d.mods.map(function (m) {
       return '<li class="mod"><input type="checkbox" id="m-' + m[0] + '" value="' + m[0] + '"><label for="m-' + m[0] + '">' + ico(m[1]) + '<span>' + m[2] + '</span><span class="tick" aria-hidden="true">✓</span></label></li>';
     }).join('');
@@ -126,18 +126,23 @@
     if (chip) {
       var on = chip.getAttribute('aria-pressed') !== 'true';
       $$('.chip').forEach(function (c) { c.setAttribute('aria-pressed', 'false'); });
-      $$('.plan').forEach(function (p) { p.classList.remove('dim', 'flash'); });
+      $$('.plan').forEach(function (p) { p.classList.remove('plan--rec', 'flash'); $('.badge', p).hidden = true; });
       if (!on) return;
       chip.setAttribute('aria-pressed', 'true');
       var t = chip.dataset.target;
       if (t === '#armar') { $('#armar').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); return; }
       var card = $('#plan-' + t);
-      $$('.plan').forEach(function (p) { if (p !== card) p.classList.add('dim'); });
-      if (card) { card.classList.remove('dim'); void card.offsetWidth; card.classList.add('flash'); card.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); }
+      if (card) { card.classList.add('plan--rec'); $('.badge', card).hidden = false; void card.offsetWidth; card.classList.add('flash'); card.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); }
       return;
     }
     var plan = e.target.closest('[data-plan]');
-    if (plan) { var id = plan.dataset.plan, cb = $('#m-' + id); if (cb) { cb.checked = true; selected[id] = true; summary(); } $('#armar').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); }
+    if (plan) {
+      var id = plan.dataset.plan, cb = $('#m-' + id);
+      if (cb) cb.checked = true;
+      selectedPlan = aud === 'b' ? id : null;
+      summary();
+      $('#armar').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    }
   });
 
   /* ---------- Pestañas Empresas / Personas ---------- */
@@ -153,12 +158,14 @@
 
   /* ---------- Plan a medida ---------- */
   function modName(id) { var m = DATA[aud].mods.filter(function (x) { return x[0] === id; })[0]; return m ? m[2] : id; }
+  function planName(id) { var p = DATA[aud].plans.filter(function (x) { return x.id === id; })[0]; return p ? p.name : id; }
   function chosen() { return $$('#mods input:checked').map(function (i) { return i.value; }); }
   function lineValue(id) { var p = priceOf(id); if (aud === 'b' || !p) return 'A definir en la propuesta'; return amount(p) + ' · ' + perLabel(p); }
   function summary() {
     var ids = chosen(), list = $('#sum-list');
-    if (!ids.length) { list.innerHTML = '<p class="empty">Todavía no marcaste nada. Elegí uno o más ítems, o contanos tu caso abajo.</p>'; return; }
-    var html = '<ul>' + ids.map(function (id) { return '<li><span>' + modName(id) + '</span><span>' + (aud === 'a' && priceOf(id) && typeof priceOf(id).monto === 'number' ? amount(priceOf(id)) : 'A confirmar') + '</span></li>'; }).join('') + '</ul>';
+    if (!ids.length && !selectedPlan) { list.innerHTML = '<p class="empty">Todavía no marcaste nada. Elegí uno o más ítems, o contanos tu caso abajo.</p>'; return; }
+    var html = selectedPlan ? '<p>Plan de interés: <strong>' + planName(selectedPlan) + '</strong></p>' : '';
+    if (ids.length) html += '<ul>' + ids.map(function (id) { return '<li><span>' + modName(id) + '</span><span>' + (aud === 'a' && priceOf(id) && typeof priceOf(id).monto === 'number' ? amount(priceOf(id)) : 'A confirmar') + '</span></li>'; }).join('') + '</ul>';
     if (aud === 'a') {
       var all = ids.every(function (id) { var p = priceOf(id); return p && typeof p.monto === 'number' && (p.periodo === 'unico' || p.periodo === 'mensual'); });
       if (all) {
@@ -185,17 +192,18 @@
     function check(n, bad, m) { fieldError(n, bad ? m : ''); if (bad && !first) first = form.elements[n]; }
     check('name', d.name.length < 2, 'Escribí tu nombre.');
     check('contact', !E.validContact(d.contact), 'Dejame un correo o un número de WhatsApp válido para responderte.');
-    check('message', !ids.length && d.message.length < 10, 'Marcá al menos un ítem o contanos tu caso (mínimo 10 caracteres).');
+    check('message', !ids.length && !selectedPlan && d.message.length < 10, 'Marcá al menos un ítem o contanos tu caso (mínimo 10 caracteres).');
     if (first) { first.focus(); setStatus('error', 'Revisá los campos marcados.'); return; }
     if (!guard.ok()) { setStatus('error', 'Esperá unos segundos y volvé a enviar.'); return; }
     var names = ids.map(modName), who = aud === 'a' ? 'empresa' : 'persona';
-    var lines = ['Nombre: ' + d.name, 'Quiero una propuesta a medida (' + who + '): ' + (names.length ? names.join(', ') : 'sin ítems marcados')];
+    var lines = ['Nombre: ' + d.name, 'Quiero una propuesta a medida (' + who + '): ' + (names.length ? names.join(', ') : selectedPlan ? 'temas a definir' : 'sin ítems marcados')];
+    if (selectedPlan) lines.push('Plan de interés: ' + planName(selectedPlan));
     if (d.message) lines.push('Mi caso: ' + d.message);
     lines.push('Contacto: ' + d.contact);
     E.deliver({
       title: 'propuesta a medida', lines: lines, button: btn, setStatus: setStatus,
-      json: { tipo: 'Propuesta a medida', recorrido: aud === 'a' ? 'Empresa' : 'Persona', nombre: d.name, items: names, mensaje: d.message, contacto: d.contact },
-      onDone: function () { form.reset(); selected = {}; summary(); guard.reset(); }
+      json: { tipo: 'Propuesta a medida', recorrido: aud === 'a' ? 'Empresa' : 'Persona', nombre: d.name, plan: selectedPlan ? planName(selectedPlan) : '', items: names, mensaje: d.message, contacto: d.contact },
+      onDone: function () { form.reset(); selectedPlan = null; summary(); guard.reset(); }
     });
   });
 
