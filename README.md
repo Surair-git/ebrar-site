@@ -6,7 +6,7 @@ Sitio estático (HTML, CSS y JavaScript, sin dependencias ni compilación). Se p
 | Archivo | Para qué sirve |
 | --- | --- |
 | `index.html` / `main.js` | Portada de 1 viewport + recorridos Empresas / Personas |
-| `precios.html` / `precios.js` | Planes de referencia y "Armá tu plan" (a medida) |
+| `precios.html` / `precios.js` | Planes y servicios, recomendación según la necesidad y "Armá tu plan" (a medida) |
 | `styles.css` | Estilos (colores y tipografías en `:root`) |
 | `config.js` | **Tus datos**: contacto, modalidades y precios |
 | `common.js` | Lógica compartida de contacto y envío de formularios |
@@ -14,10 +14,12 @@ Sitio estático (HTML, CSS y JavaScript, sin dependencias ni compilación). Se p
 
 ## Cargar precios (`config.js` → `precios.planes`)
 Mientras `monto` sea `null`, la web muestra **"Consultar"** (o "A cotizar"): no se inventa ningún valor.
+La página se presenta como **Planes y servicios**, con presupuesto personalizado. `precios.nota` permite editar la aclaración que acompaña los planes.
 Para publicar un precio, poné un número sin puntos ni símbolo: `monto: 150000`.
 - `periodo`: `unico`, `mensual`, `sesion`, `pack` o `cotizar`.
 - `desde: true` muestra "Desde $X" (recomendado cuando el alcance varía).
 - `duracionSesion` y `packSesiones` completan el detalle de las sesiones.
+Los planes se destacan solo después de elegir una necesidad en "¿Cuál te conviene?"; no hay recomendaciones predeterminadas.
 Si todos los ítems de "Armá tu plan" tienen precio numérico (único o mensual), el resumen muestra un total de referencia; si no, indica que el valor se define en la propuesta.
 
 ## Formularios y envío
